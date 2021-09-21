@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { connect, MapStateToProps } from 'react-redux';
 import { NavModel } from '@grafana/data';
 import Page from 'app/core/components/Page/Page';
 import { StoreState } from 'app/types';
 import { GrafanaRouteComponentProps } from '../../core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { useAsync, useDebounce } from 'react-use';
+import { useDebounce } from 'react-use';
 import { PlaylistDTO } from './types';
 import { ConfirmModal } from '@grafana/ui';
 import PageActionBar from 'app/core/components/PageActionBar/PageActionBar';
@@ -27,24 +27,22 @@ export const PlaylistPage: FC<PlaylistPageProps> = ({ navModel }) => {
   const [startPlaylist, setStartPlaylist] = useState<PlaylistDTO | undefined>();
   const [playlistToDelete, setPlaylistToDelete] = useState<PlaylistDTO | undefined>();
   const [forcePlaylistsFetch, setForcePlaylistsFetch] = useState(0);
+  const [playlists, setPlaylists] = useState<PlaylistDTO[]>([]);
 
-  const { value: playlists, loading } = useAsync(async () => {
-    return await getAllPlaylist(searchQuery);
-  }, [forcePlaylistsFetch, debouncedSearchQuery]);
+  useDebounce(
+    async () => {
+      const playlists = await getAllPlaylist(searchQuery);
+      if (!hasFetched) {
+        setHasFetched(true);
+      }
+      setPlaylists(playlists);
+      setDebouncedSearchQuery(searchQuery);
+    },
+    350,
+    [forcePlaylistsFetch, searchQuery]
+  );
 
-  const { value: playlistsWithoutSearch } = useAsync(async () => {
-    return await getAllPlaylist('');
-  }, [forcePlaylistsFetch, debouncedSearchQuery]);
-
-  useEffect(() => {
-    if (!hasFetched && !loading) {
-      setHasFetched(true);
-    }
-  }, [loading, hasFetched]);
-
-  useDebounce(() => setDebouncedSearchQuery(searchQuery), 350, [searchQuery]);
-
-  let hasPlaylists = playlists && playlists.length > 0;
+  const hasPlaylists = playlists && playlists.length > 0;
   const onDismissDelete = () => setPlaylistToDelete(undefined);
   const onDeletePlaylist = () => {
     if (!playlistToDelete) {
@@ -69,19 +67,7 @@ export const PlaylistPage: FC<PlaylistPageProps> = ({ navModel }) => {
     />
   );
 
-  // const checkPlaylist = async (playlists: PlaylistDTO[] | undefined, hasPlaylists: any) => {
-  //   let result;
-  //   if ((await playlists!.length) < 1) {
-  //     result = false;
-  //     console.log(playlists!.length);
-  //   } else {
-  //     result = true;
-  //   }
-  //   return result !== hasPlaylists ? (hasPlaylists = result) : null;
-  // };
-  // checkPlaylist(playlists, hasPlaylists);
-  const showSearch =
-    (playlistsWithoutSearch && playlistsWithoutSearch.length > 0) || debouncedSearchQuery.length > 0 || loading;
+  const showSearch = playlists.length > 0 || searchQuery.length > 0 || debouncedSearchQuery.length > 0;
 
   return (
     <Page navModel={navModel}>
