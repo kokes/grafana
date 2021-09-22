@@ -10,7 +10,7 @@ export function SearchSettings({ options, onOptionsChange }: Props) {
   const styles = useStyles(getStyles);
 
   return (
-    <div className={css({ width: '100%' })}>
+    <div className={styles.container}>
       <h3 className="page-heading">Search</h3>
       <InlineFieldRow className={styles.row}>
         <InlineField tooltip="Removes the Search tab from the Tempo query editor." label="Hide search" labelWidth={26}>
@@ -30,6 +30,10 @@ export function SearchSettings({ options, onOptionsChange }: Props) {
 }
 
 const getStyles = (theme: GrafanaTheme) => ({
+  container: css`
+    label: container;
+    width: 100%;
+  `,
   row: css`
     label: row;
     align-items: baseline;

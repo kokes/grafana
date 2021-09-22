@@ -197,9 +197,9 @@ const NativeSearch = ({ datasource, query, onChange, onBlur, onRunQuery }: Props
         </InlineFieldRow>
       </div>
       {error ? (
-        <Alert title="Unable to connect to Tempo" severity="info" className={css({ maxWidth: '75ch' })}>
+        <Alert title="Unable to connect to Tempo search" severity="info" className={css({ maxWidth: '75ch' })}>
           Please ensure that Tempo is configured with search enabled. If you would like to hide this tab, you can
-          configure it in the datasource settings.
+          configure it in the <a href={`/datasources/${datasource.uid}`}>datasource settings</a>.
         </Alert>
       ) : null}
     </>
