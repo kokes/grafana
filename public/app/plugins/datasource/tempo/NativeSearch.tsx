@@ -94,6 +94,7 @@ const NativeSearch = ({ datasource, query, onChange, onBlur, onRunQuery }: Props
             }}
             placeholder="Select a service"
             isClearable
+            onKeyDown={onKeyDown}
           />
         </InlineField>
       </InlineFieldRow>
@@ -111,6 +112,7 @@ const NativeSearch = ({ datasource, query, onChange, onBlur, onRunQuery }: Props
             }}
             placeholder="Select a span"
             isClearable
+            onKeyDown={onKeyDown}
           />
         </InlineField>
       </InlineFieldRow>
@@ -166,7 +168,7 @@ const NativeSearch = ({ datasource, query, onChange, onBlur, onRunQuery }: Props
         </InlineField>
       </InlineFieldRow>
       <InlineFieldRow>
-        <InlineField label="Limit" labelWidth={14} grow tooltip="Maximum numbers of returned results">
+        <InlineField label="Limit" labelWidth={14} grow tooltip="Maximum numbers of returned results. Defaults to 100.">
           <Input
             value={query.limit || ''}
             type="number"
